@@ -34,17 +34,15 @@ public class ClienteRestController {
         return clienteService.save(cliente);
     }
 
-    @DeleteMapping("/clientes")
+    @DeleteMapping("/clientes/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
         clienteService.deleteById(id);
     }
 
-    @PutMapping("/clientes/{id}")
-    public Cliente update(@RequestBody Cliente cliente, @PathVariable Long id){
-        Cliente clienteActual = clienteService.findById(id);
-        cliente.setApellido(clienteActual.getApellido());
-        cliente.setNombre(clienteActual.getNombre());
-        cliente.setEmail(clienteActual.getEmail());
+    @PutMapping("/clientes")
+    public Cliente update(@RequestBody Cliente cliente){
         return clienteService.save(cliente);
     }
+
 }
