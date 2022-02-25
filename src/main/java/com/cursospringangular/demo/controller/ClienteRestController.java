@@ -8,11 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.zip.DataFormatException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -32,16 +28,17 @@ public class ClienteRestController {
     @GetMapping("/clientes/{id}")
     public ResponseEntity<?> show(@PathVariable Long id){
         Map<String, Object> response = new HashMap<>();
-        Cliente cliente = null;
+        Cliente cliente;
         try{
             cliente =clienteService.findById(id);
         }catch(NoSuchElementException e){
             response.put("mensaje", "Error al realizar la consulta en la base de datos");
+            response.put("mensaje2", "El cliente ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
             response.put("error",e.getMessage());
             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(cliente == null){
-            response.put("mensaje", "El cliente ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
+            response.put("mensaje","El valor de cliente al recuperarlo de la bd es null");
             return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
         }
 
@@ -50,8 +47,19 @@ public class ClienteRestController {
 
     @PostMapping("/clientes")
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente create(@RequestBody Cliente cliente){
-        return clienteService.save(cliente);
+    public ResponseEntity<?> create(@RequestBody Cliente cliente){
+        Cliente newCliente;
+        Map<String, Object> response = new HashMap<>();
+        try{
+            newCliente = clienteService.save(cliente);
+        }catch (DataAccessException e){
+            response.put("mensaje", "Error al insertar en la base de datos");
+            response.put("error", Objects.requireNonNull(e.getMessage()).concat(": ".concat(e.getMostSpecificCause().getMessage())));
+            return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("mensaje","El cliente ha sido creado con éxito!");
+        response.put("cliente",newCliente);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     @DeleteMapping("/clientes/{id}")
@@ -60,9 +68,31 @@ public class ClienteRestController {
         clienteService.deleteById(id);
     }
 
-    @PutMapping("/clientes")
-    public Cliente update(@RequestBody Cliente cliente){
-        return clienteService.save(cliente);
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<?> update(@RequestBody Cliente cliente,@PathVariable Long id){
+        Cliente clienteActual = clienteService.findById(id);
+        Cliente clienteUpdated;
+
+        Map<String, Object> response = new HashMap<>();
+        if(clienteActual == null){
+            response.put("mensaje","Error no se puedo editar el cliente ".concat(id.toString()).concat(" no existe en bd") );
+            response.put("cliente",clienteActual);
+            return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+        }
+        try {
+            clienteActual.setApellido(cliente.getApellido());
+            clienteActual.setNombre(cliente.getNombre());
+            clienteActual.setEmail(cliente.getEmail());
+            clienteActual.setCreateAt(cliente.getCreateAt());
+            clienteUpdated = clienteService.save(clienteActual);
+        }catch(DataAccessException e){
+            response.put("mensaje", "Error al actualizar el cliente en la base de datos");
+            response.put("error", Objects.requireNonNull(e.getMessage()).concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("mensaje", "El cliente ha sido actualizado con éxito");
+        response.put("cliente", clienteUpdated);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
 }
