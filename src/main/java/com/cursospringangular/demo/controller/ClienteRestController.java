@@ -33,12 +33,11 @@ public class ClienteRestController {
             cliente =clienteService.findById(id);
         }catch(NoSuchElementException e){
             response.put("mensaje", "Error al realizar la consulta en la base de datos");
-            response.put("mensaje2", "El cliente ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
             response.put("error",e.getMessage());
             return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if(cliente == null){
-            response.put("mensaje","El valor de cliente al recuperarlo de la bd es null");
+            response.put("mensaje", "El cliente ID: ".concat(id.toString().concat(" no existe en la base de datos!")));
             return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
         }
 
@@ -64,8 +63,18 @@ public class ClienteRestController {
 
     @DeleteMapping("/clientes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){
-        clienteService.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            clienteService.deleteById(id);
+        }catch (DataAccessException e){
+            response.put("mensaje", "Error al eliminar el cliente en la base de datos");
+            response.put("error", Objects.requireNonNull(e.getMessage()).concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("mensaje","El cliente ha sido eliminado con exito");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
     }
 
     @PutMapping("/clientes/{id}")
