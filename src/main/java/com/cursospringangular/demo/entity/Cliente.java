@@ -1,6 +1,10 @@
 package com.cursospringangular.demo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
@@ -9,19 +13,20 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty(message="no puede estar vacio")
+    @Size(min=4, max=12, message="el tamaño tiene que estar entre 4 y 12")
     @Column(nullable = false)
     private String nombre;
+    @NotEmpty(message="no puede estar vacio")
     private String apellido;
+    @NotEmpty
+    @Email(message = "no puede estar vacio")
     @Column(nullable = false, unique = true)
     private String email;
+    @NotNull(message = "no puede estar vacio")
     @Column(name="create_at")
     @Temporal(TemporalType.DATE)
     private Date createAt;
-
-    @PrePersist
-    public void prepersist(){
-        createAt = new Date();
-    }
 
     public Long getId() {
         return id;
