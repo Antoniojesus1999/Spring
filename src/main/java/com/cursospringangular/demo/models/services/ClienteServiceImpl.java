@@ -1,7 +1,8 @@
-package com.cursospringangular.demo.services;
+package com.cursospringangular.demo.models.services;
 
-import com.cursospringangular.demo.dao.IClienteDao;
-import com.cursospringangular.demo.entity.Cliente;
+import com.cursospringangular.demo.models.dao.IClienteDao;
+import com.cursospringangular.demo.models.entity.Cliente;
+import com.cursospringangular.demo.models.entity.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,12 @@ public class ClienteServiceImpl implements IClienteService{
     @Override
     public void deleteById(Long id) {
         iClienteDao.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Region> findAllRegiones(){
+        return iClienteDao.findAllRegiones();
     }
 
 

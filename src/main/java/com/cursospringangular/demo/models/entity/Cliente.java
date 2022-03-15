@@ -1,42 +1,49 @@
-package com.cursospringangular.demo.entity;
+package com.cursospringangular.demo.models.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name="clientes")
-public class Cliente {
+public class Cliente implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message="no puede estar vacio")
+
+    @NotEmpty(message ="no puede estar vacio")
     @Size(min=4, max=12, message="el tamaño tiene que estar entre 4 y 12")
-    @Column(nullable = false)
+    @Column(nullable=false)
     private String nombre;
-    @NotEmpty(message="no puede estar vacio")
+
+    @NotEmpty(message ="no puede estar vacio")
     private String apellido;
-    @NotEmpty
-    @Email(message = "no puede estar vacio")
-    @Column(nullable = false, unique = true)
+
+    @NotEmpty(message ="no puede estar vacio")
+    @Email(message="no es una dirección de correo bien formada")
+    @Column(nullable=false, unique=true)
     private String email;
-    @NotNull(message = "no puede estar vacio")
+
+    @NotNull(message ="no puede estar vacio")
     @Column(name="create_at")
     @Temporal(TemporalType.DATE)
     private Date createAt;
 
     private String foto;
 
-    public String getFoto() {
-        return foto;
-    }
+    @NotNull(message="la región no puede ser vacia")
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="region_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Region region;
 
-    public void setFoto(String foto) {
-        this.foto = foto;
-    }
 
     public Long getId() {
         return id;
@@ -77,4 +84,22 @@ public class Cliente {
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
     }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
+    }
+
+    private static final long serialVersionUID = 1L;
 }
