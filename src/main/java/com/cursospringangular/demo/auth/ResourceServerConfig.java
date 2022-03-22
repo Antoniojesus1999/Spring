@@ -29,6 +29,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 				.and().cors().configurationSource(corsConfigurationSource());
 	}
 
+	/*
+	Por defecto al cargar la aplicación entra y carga la configuración de Spring security
+	concretamente le damos todos los permisos a front
+	 */
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
