@@ -1,7 +1,11 @@
 package com.cursospringangular.demo.models.services;
 
 import com.cursospringangular.demo.models.dao.IClienteDao;
+import com.cursospringangular.demo.models.dao.IFacturaDao;
+import com.cursospringangular.demo.models.dao.IProductoDao;
 import com.cursospringangular.demo.models.entity.Cliente;
+import com.cursospringangular.demo.models.entity.Factura;
+import com.cursospringangular.demo.models.entity.Producto;
 import com.cursospringangular.demo.models.entity.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +19,10 @@ import java.util.List;
 public class ClienteServiceImpl implements IClienteService{
     @Autowired
     IClienteDao iClienteDao;
+    @Autowired
+    IFacturaDao iFacturaDao;
+    @Autowired
+    IProductoDao iProductoDao;
     @Override
     @Transactional(readOnly = true)
     public List<Cliente> findAll() {
@@ -47,6 +55,30 @@ public class ClienteServiceImpl implements IClienteService{
     @Transactional(readOnly = true)
     public List<Region> findAllRegiones(){
         return iClienteDao.findAllRegiones();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Factura findFacturaById(Long id) {
+        return iFacturaDao.findById(id).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public Factura saveFactura(Factura factura) {
+        return iFacturaDao.save(factura);
+    }
+
+    @Override
+    @Transactional
+    public void deleteFacturaById(Long id) {
+        iFacturaDao.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Producto> findProductoByNombre(String term) {
+        return iProductoDao.findByNombreContains(term);
     }
 
 

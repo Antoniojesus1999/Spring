@@ -18,6 +18,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService usuarioService;
 
+	/*
+	* Se utiliza para codificar las contraseñas lo llamo en el aplication para generar contraseñas para 12345 statico
+	* */
 	@Bean
 	public static BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

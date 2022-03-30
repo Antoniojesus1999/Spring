@@ -2,7 +2,6 @@ package com.cursospringangular.demo.controller;
 
 import com.cursospringangular.demo.models.entity.Cliente;
 import com.cursospringangular.demo.models.entity.Region;
-import com.cursospringangular.demo.models.services.ClienteServiceImpl;
 import com.cursospringangular.demo.models.services.IClienteService;
 import com.cursospringangular.demo.models.services.IUploadFileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class ClienteRestController {
         return clienteService.findAll(pageable);
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    //@Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/clientes/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
 
